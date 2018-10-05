@@ -1,0 +1,20 @@
+[[source]]
+url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+scipy = "*"
+pandas = "*"
+seaborn = "*"
+ipython = "*"
+sklearn = "*"
+matplotlib = "*"
+
+[dev-packages]
+"autopep8" = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.6"

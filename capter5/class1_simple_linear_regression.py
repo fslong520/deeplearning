@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-' 深度学习1 '
+' 深度学习1简单线性回归 '
 __author__ = 'fslong'
 __cover__ = '张玉宏'
 from matplotlib import pyplot as plt
@@ -24,8 +24,9 @@ class Class1(object):
         x,y=[row[0] for row in predict],[row[1] for row in predict]
         plt.plot(x,y,'r^-')
         plt.grid()
+        fig=plt.gcf()
         plt.show()
-        plt.savefig('class1.png')
+        fig.savefig('class1.png')
 
     # 计算均值:
     def mean(self, values):

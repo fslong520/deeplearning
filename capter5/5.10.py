@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+'山鸢尾K-近邻手动预测'
 
 import csv
 import math

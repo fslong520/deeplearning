@@ -10,6 +10,7 @@ pandas = "*"
 seaborn = "*"
 sklearn = "*"
 matplotlib = "*"
+scikit-learn = "*"
 
 [dev-packages]
 "autopep8" = "*"

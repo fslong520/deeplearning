@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-' 深度学习1 '
+' 深度学习 '
 
 from random import seed
 from random import randrange
@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 
 class Student(object):
     def __init__(self):
-        self.csv = 'class1.csv'
+        self.csv = 'data/5.6.csv'
         self.path = os.path.dirname(os.path.abspath(__file__))
         self.dataset = []
 
@@ -124,8 +124,8 @@ class Student(object):
         plt.grid()
         fig = plt.gcf()
         plt.show()
-        fig.savefig(os.path.join(self.path,'class1.png'))
-        print('图片已保存在当前程序目录下，名称为”class1.png“')
+        fig.savefig(os.path.join(self.path,'img/5.6.png'))
+        print('图片已保存在当前程序目录下，名称为”img/5.6.png“')
 
     def main(self):
         # 设置随机种子，为随机挑选训练和测试山上集做准备:

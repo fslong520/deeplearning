@@ -8,13 +8,13 @@ numpy = "*"
 scipy = "*"
 pandas = "*"
 seaborn = "*"
-ipython = "*"
 sklearn = "*"
 matplotlib = "*"
 
 [dev-packages]
 "autopep8" = "*"
 pylint = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.6"

@@ -7,6 +7,7 @@ from csv import reader
 from math import exp
 import random
 import os
+import time
 
 
 def random_seed():
@@ -83,6 +84,8 @@ class BP_Network(object):
         self.n_inputs = n_inputs
         self.n_hidden = n_hidden
         self.n_outputs = n_outputs
+        self.n_epoch = 2000
+        self.l_rate = 0.1
         random_seed()
         hidden_layer = [{'weights': [random.random()for i in range(self.n_inputs+1)]}
                         for i in range(self.n_hidden)]
@@ -143,8 +146,109 @@ class BP_Network(object):
         for i in range(len(self.network)):
             inputs = row[:-1]
             if i != 0:
-                inputs = [neuron['output'] for neuron in self.network[:-1]]
+                inputs = [neuron['output'] for neuron in self.network[i-1]]
             for neuron in self.network[i]:
                 for j in range(len(inputs)):
                     neuron['weights'][j] += self.l_rate * \
                         neuron['responsbility']*inputs[j]
+                    neuron['weights'][-1] += self.l_rate * \
+                        neuron['responsbility']
+
+    # 根据指定的周期迅雷网络:
+    def train_network(self, train):
+        for epoch in range(self.n_epoch):
+            sum_error = 0
+            for row in train:
+                outputs = self.forward_propagate(row)
+                expected = [0 for i in range(self.n_outputs)]
+                # 比如分类是3，那么就把索引为3的输出设置为1，其他的就是0：
+                expected[row[-1]] == 1
+                sum_error += sum([(expected[i]-outputs[i]) **
+                                  2 for i in range(len(expected))])
+                self.backward_propagate_error(expected)
+                self._update_weights(row)
+            print('=>周期={}，误差={:.3}'.format(epoch+1, sum_error*100))
+
+    # 利用训练好的网络，预测新的数据:
+
+    def predict(self, row):
+        outputs = self.forward_propagate(row)
+        # 因为只有一个输出的值我们设置成了1，而这个值得索引恰好就是分类：
+        return outputs.index(max(outputs))
+
+    # 利用随机梯度递减策略训练网络：
+
+    def back_propagation(self, train, test):
+        self.train_network(train)
+        predictions = []
+        for row in test:
+            prediction = self.predict(row)
+            predictions.append(prediction)
+        return predictions
+
+    # 将数据等分成k份：
+
+    def cross_validation_splite(self, n_folds):
+        dataset_split = []
+        dataset_copy = list(self.dataset)
+        fold_size = int(len(self.dataset)/n_folds)
+        for i in range(n_folds):
+            print('第{}组'.format(i+1))
+            fold = []
+            while len(fold) < fold_size:
+                random_seed()
+                index = random.randrange(len(dataset_copy))
+                fold.append(dataset_copy.pop(index))
+            dataset_split.append(fold)
+        return dataset_split
+
+    # 用预测正确百分比来衡量正确率:
+
+    def accuracy_metric(self, actual, predictions):
+        correct = 0
+        for i in range(len(actual)):
+            #print('实际是{}类，预测是{}类'.format(actual[i], predictions[i]))
+            if actual[i] == predictions[i]:
+                correct += 1
+        return 100*correct/float(len(actual))
+
+    # 用每一个交叉分割得块（训练集合，测试集合）来评估BP算法：
+
+    def evaluate_algorithm(self, dataset, n_folds, l_rate, n_epoch):
+        self.l_rate = l_rate
+        self.n_epoch = n_epoch
+        self.dataset = dataset
+        folds = self.cross_validation_splite(n_folds)
+        scores = []
+        for fold in folds:
+            train_set = list(folds)
+            train_set.remove(fold)
+            train_set = sum(train_set, [])
+            test_set = []
+            actual = [row[-1] for row in fold]
+            for row in fold:
+                row_copy = list(row)
+                test_set.append(row_copy)
+                row_copy[-1] = None
+            predictions = self.back_propagation(train_set, test_set)            
+            accuracy = self.accuracy_metric(actual, predictions)
+            scores.append(accuracy)
+        return scores
+
+
+if __name__ == '__main__':
+    filename = 'data/seeds_dataset.csv'
+    db = Database(filename)
+    dataset = db.get_dataset()
+
+    # 设置网络初始化参数：
+    n_inputs = len(dataset[0])-1
+    n_hidden = 6
+    n_outputs = len(set([row[-1] for row in dataset]))
+    BP = BP_Network(n_inputs, n_hidden, n_outputs)
+    l_rate = 0.1
+    n_folds = 5
+    n_epoch = 500
+    scores = BP.evaluate_algorithm(dataset, n_folds, l_rate, n_epoch)
+    print('评估算法正交验证得分:{}'.format(scores))
+    print('平均准确率：{:.3}%%'.format(sum(scores)/float(len(scores))))

@@ -151,8 +151,8 @@ class BP_Network(object):
                 for j in range(len(inputs)):
                     neuron['weights'][j] += self.l_rate * \
                         neuron['responsbility']*inputs[j]
-                    neuron['weights'][-1] += self.l_rate * \
-                        neuron['responsbility']
+                neuron['weights'][-1] += self.l_rate * \
+                    neuron['responsbility']
 
     # 根据指定的周期迅雷网络:
     def train_network(self, train):
@@ -162,12 +162,12 @@ class BP_Network(object):
                 outputs = self.forward_propagate(row)
                 expected = [0 for i in range(self.n_outputs)]
                 # 比如分类是3，那么就把索引为3的输出设置为1，其他的就是0：
-                expected[row[-1]] == 1
+                expected[row[-1]] = 1
                 sum_error += sum([(expected[i]-outputs[i]) **
                                   2 for i in range(len(expected))])
                 self.backward_propagate_error(expected)
                 self._update_weights(row)
-            print('=>周期={}，误差={:.3}'.format(epoch+1, sum_error*100))
+            print('=>周期={}，误差={:g}'.format(epoch+1, sum_error*100))
 
     # 利用训练好的网络，预测新的数据:
 
@@ -230,7 +230,7 @@ class BP_Network(object):
                 row_copy = list(row)
                 test_set.append(row_copy)
                 row_copy[-1] = None
-            predictions = self.back_propagation(train_set, test_set)            
+            predictions = self.back_propagation(train_set, test_set)
             accuracy = self.accuracy_metric(actual, predictions)
             scores.append(accuracy)
         return scores
@@ -243,10 +243,10 @@ if __name__ == '__main__':
 
     # 设置网络初始化参数：
     n_inputs = len(dataset[0])-1
-    n_hidden = 6
+    n_hidden = 5
     n_outputs = len(set([row[-1] for row in dataset]))
     BP = BP_Network(n_inputs, n_hidden, n_outputs)
-    l_rate = 0.1
+    l_rate = 0.3
     n_folds = 5
     n_epoch = 500
     scores = BP.evaluate_algorithm(dataset, n_folds, l_rate, n_epoch)

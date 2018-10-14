@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "*"
 scipy = "*"
 pandas = "*"
 seaborn = "*"
@@ -12,11 +11,14 @@ sklearn = "*"
 matplotlib = "*"
 scikit-learn = "*"
 tensorflow = "*"
+numpy = "*"
 
 [dev-packages]
 "autopep8" = "*"
 pylint = "*"
 ipython = "*"
+jupyter = "*"
+notebook = "*"
 
 [requires]
 python_version = "3.6"
